@@ -179,3 +179,16 @@ input {
   font-size: 20px;
   font-weight: 700;
 }
+
+.chart-box {
+  margin-top: 28px;
+  padding: 20px;
+  background-color: #dde1e6;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.chart-box h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+}

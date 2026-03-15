@@ -1,6 +1,25 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import { Line } from 'react-chartjs-2';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Tooltip,
+  Legend,
+);
 
 function Home() {
   const navigate = useNavigate();
@@ -9,10 +28,10 @@ function Home() {
   useEffect(() => {
     const fetchRecords = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/records/1");
+        const response = await axios.get('http://127.0.0.1:8000/records/1');
         setRecords(response.data);
       } catch (error) {
-        console.error("Kayıtlar alınamadı:", error);
+        console.error('Kayıtlar alınamadı:', error);
       }
     };
 
@@ -22,7 +41,7 @@ function Home() {
   const totalRecords = records.length;
 
   const lastFocus =
-    records.length > 0 ? records[records.length - 1].focus_prediction : "-";
+    records.length > 0 ? records[records.length - 1].focus_prediction : '-';
 
   const averageStudy =
     records.length > 0
@@ -30,7 +49,58 @@ function Home() {
           records.reduce((sum, record) => sum + record.study_hours, 0) /
           records.length
         ).toFixed(1)
-      : "-";
+      : '-';
+
+  const convertFocusToNumber = (focus) => {
+    if (!focus) return 0;
+    if (focus.toLowerCase().includes('low')) return 1;
+    if (focus.toLowerCase().includes('medium')) return 2;
+    if (focus.toLowerCase().includes('high')) return 3;
+    return 0;
+  };
+
+  const chartLabels = records.map((record) =>
+    new Date(record.created_at).toLocaleDateString('tr-TR'),
+  );
+
+  const chartValues = records.map((record) =>
+    convertFocusToNumber(record.focus_prediction),
+  );
+
+  const chartData = {
+    labels: chartLabels,
+    datasets: [
+      {
+        label: 'Odak Seviyesi',
+        data: chartValues,
+        tension: 0.3,
+      },
+    ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: true,
+      },
+    },
+    scales: {
+      y: {
+        min: 1,
+        max: 3,
+        ticks: {
+          stepSize: 1,
+          callback: function (value) {
+            if (value === 1) return 'Low';
+            if (value === 2) return 'Medium';
+            if (value === 3) return 'High';
+            return value;
+          },
+        },
+      },
+    },
+  };
 
   return (
     <div className="card">
@@ -43,7 +113,7 @@ function Home() {
 
       <button
         className="primary-button"
-        onClick={() => navigate("/veri-girisi")}
+        onClick={() => navigate('/veri-girisi')}
       >
         Veri Girişine Git
       </button>
@@ -61,9 +131,16 @@ function Home() {
 
         <div className="summary-box">
           <h3>Ortalama Çalışma</h3>
-          <p>{averageStudy === "-" ? "-" : `${averageStudy} saat`}</p>
+          <p>{averageStudy === '-' ? '-' : `${averageStudy} saat`}</p>
         </div>
       </div>
+
+      {records.length > 0 && (
+        <div className="chart-box">
+          <h3>Odak Seviyesi Grafiği</h3>
+          <Line data={chartData} options={chartOptions} />
+        </div>
+      )}
     </div>
   );
 }
