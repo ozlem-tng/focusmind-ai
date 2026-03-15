@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
+from fastapi.middleware.cors import CORSMiddleware
 
 import models
 import schemas
@@ -9,6 +10,14 @@ from database import engine, SessionLocal, Base
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="FocusMind AI Backend")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 def get_db():
