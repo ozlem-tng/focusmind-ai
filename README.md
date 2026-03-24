@@ -41,8 +41,4 @@ Build a project portfolio
 
 These are beginner-level and learning-focused projects. Some features may be incomplete and will be improved over time.
 
-👩‍💻 Author
 
-Özlem Tunğ
-Computer Engineering Student
-Focused on improving skills in software development and building real-world projects.
