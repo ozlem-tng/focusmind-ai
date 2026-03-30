@@ -1,44 +1,56 @@
-📚 Learning Projects Repository
+# 🧠 FocusMind AI
 
-This repository contains small projects I built while learning different technologies and improving my software development skills.
+FocusMind AI is a simple AI-powered web application that analyzes daily habits and predicts the user's focus level while providing personalized recommendations.
 
-🚀 About
+## 🚀 Features
 
-These projects are created for practice purposes and cover various topics such as:
+- User registration and login system
+- Daily habit tracking (study time, sleep, stress, etc.)
+- Focus level prediction (High / Low Focus)
+- Dynamic recommendation system based on user data
+- Data visualization with charts
+- User-specific history tracking
 
-Web development (HTML, CSS, JavaScript)
-Backend development (Node.js, ASP.NET MVC)
-Database usage (SQL Server)
-Basic API development
-Simple UI designs
+## 🧠 How It Works
 
-The main goal is to learn by doing and build a strong foundation in software development.
+The system analyzes the following parameters:
 
-🛠️ Technologies Used
-HTML5
-CSS3
-JavaScript
-Node.js
-Express.js
-ASP.NET MVC
-SQL Server
-📁 Projects
+- Study hours
+- Break count
+- Sleep duration
+- Screen time
+- Caffeine consumption
+- Stress level
 
-Each folder in this repository represents a separate mini project.
+Based on these inputs, it:
 
-Some examples include:
+1. Predicts focus level
+2. Generates personalized recommendations using rule-based logic
 
-📝 Note Taking App (Node.js + MSSQL)
-🌐 Basic Web Interfaces
-🔧 API Experiments
-📊 Simple Data Handling Projects
-🎯 Purpose
-Improve coding skills
-Practice new technologies
-Understand real-world project structure
-Build a project portfolio
-📌 Note
+## 🛠 Technologies Used
 
-These are beginner-level and learning-focused projects. Some features may be incomplete and will be improved over time.
+### Frontend
+- React.js
+- Axios
+- CSS
 
+### Backend
+- FastAPI
+- SQLAlchemy
+- SQLite
 
+## 📊 Example Output
+
+- High Focus → Maintain your current routine
+- Low Focus → Improve sleep / reduce stress / limit screen time
+
+## 🎯 Purpose
+
+This project aims to demonstrate how user behavior can be analyzed to generate intelligent insights and recommendations.
+
+## 📌 Future Improvements
+
+- Machine Learning model integration
+- More advanced recommendation system
+- User authentication with JWT
+- Mobile-friendly UI improvements
