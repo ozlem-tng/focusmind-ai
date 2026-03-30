@@ -28,7 +28,7 @@ function Home() {
   useEffect(() => {
     const fetchRecords = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:8000/records/1');
+        const response = await axios.get('http://127.0.0.1:8000/records/3');
         setRecords(response.data);
       } catch (error) {
         console.error('Kayıtlar alınamadı:', error);

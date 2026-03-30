@@ -3,7 +3,7 @@ import axios from 'axios';
 
 function DataEntry() {
   const [formData, setFormData] = useState({
-    user_id: 1,
+    user_id: 3,
     study_hours: '',
     break_count: '',
     sleep_hours: '',
@@ -13,6 +13,7 @@ function DataEntry() {
   });
 
   const [result, setResult] = useState(null);
+  const [feedbackMessage, setFeedbackMessage] = useState('');
 
   const handleChange = (e) => {
     setFormData({
@@ -23,17 +24,38 @@ function DataEntry() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setFeedbackMessage('');
 
     try {
       const response = await axios.post(
         'http://127.0.0.1:8000/predict',
         formData,
       );
-
+      console.log('Predict response:', response.data);
       setResult(response.data);
     } catch (error) {
-      console.error('Hata:', error);
+      console.error('Predict hatası:', error);
+      console.error('Response data:', error.response?.data);
       alert('Backend bağlantısı başarısız');
+    }
+  };
+
+  const sendFeedback = async (value) => {
+    if (!result?.id) {
+      setFeedbackMessage('Feedback için kayıt id bulunamadı.');
+      return;
+    }
+
+    try {
+      await axios.post('http://127.0.0.1:8000/feedback', {
+        record_id: result.id,
+        is_correct: value,
+      });
+      setFeedbackMessage('Geri bildiriminiz için teşekkürler!');
+    } catch (error) {
+      console.error('Feedback gönderilemedi:', error);
+      console.error('Feedback response:', error.response?.data);
+      setFeedbackMessage('Feedback gönderilemedi.');
     }
   };
 
@@ -132,6 +154,20 @@ function DataEntry() {
 
           <h3>Öneri</h3>
           <p>{result.recommendation}</p>
+
+          <div className="feedback-box">
+            <p>Bu öneri faydalı mı?</p>
+
+            <button type="button" onClick={() => sendFeedback(true)}>
+              👍 Faydalıydı
+            </button>
+
+            <button type="button" onClick={() => sendFeedback(false)}>
+              👎 Faydalı değildi
+            </button>
+
+            {feedbackMessage && <p>{feedbackMessage}</p>}
+          </div>
         </div>
       )}
     </div>
