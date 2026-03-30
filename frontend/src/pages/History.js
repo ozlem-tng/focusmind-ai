@@ -1,27 +1,37 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function History() {
   const [records, setRecords] = useState([]);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const userId = localStorage.getItem('user_id');
 
   useEffect(() => {
+    if (!userId) {
+      navigate('/giris');
+      return;
+    }
+
     const fetchRecords = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/records/3")
+        const response = await axios.get(
+          `http://127.0.0.1:8000/records/${userId}`,
+        );
         setRecords(response.data);
       } catch (err) {
-        console.error("Kayıtlar alınamadı:", err);
-        setError("Kayıtlar alınamadı.");
+        console.error('Kayıtlar alınamadı:', err);
+        setError('Kayıtlar alınamadı.');
       }
     };
 
     fetchRecords();
-  }, []);
+  }, [navigate, userId]);
 
   const formatDate = (dateString) => {
-    if (!dateString) return "-";
-    return new Date(dateString).toLocaleString("tr-TR");
+    if (!dateString) return '-';
+    return new Date(dateString).toLocaleString('tr-TR');
   };
 
   return (

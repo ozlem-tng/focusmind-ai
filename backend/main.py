@@ -14,14 +14,16 @@ app = FastAPI(title="FocusMind AI Backend")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://192.168.149.1:3000",
-    ],
+  allow_origins=[
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:3001",
+    "http://127.0.0.1:3001",
+],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    
 )
 
 
@@ -33,45 +35,28 @@ def get_db():
         db.close()
 
 
-def simple_focus_predict(record: schemas.DailyRecordCreate):
-    score = 0
+@app.post("/predict")
+def predict(record: schemas.DailyRecordCreate, db: Session = Depends(get_db)):
 
-    if record.study_hours >= 4:
-        score += 2
-    elif record.study_hours >= 2:
-        score += 1
-
-    if record.sleep_hours >= 7:
-        score += 2
-    elif record.sleep_hours >= 5:
-        score += 1
-
-    if record.break_count >= 2 and record.break_count <= 5:
-        score += 1
-
-    if record.screen_time <= 5:
-        score += 1
-
-    if record.caffeine_cups <= 2:
-        score += 1
-
-    if record.stress_level <= 4:
-        score += 2
-    elif record.stress_level <= 7:
-        score += 1
-
-    if score >= 8:
+    # basit örnek prediction
+    if record.study_hours >= 5 and record.sleep_hours >= 7:
         prediction = "High Focus"
-        recommendation = "Odak seviyen iyi görünüyor. Bu düzeni koruyabilirsin."
-    elif score >= 5:
-        prediction = "Medium Focus"
-        recommendation = "Odak seviyen orta. Uyku ve ekran süresini iyileştirmek faydalı olabilir."
     else:
         prediction = "Low Focus"
-        recommendation = "Uyku düzeni, stres kontrolü ve mola planlaması üzerinde çalışmalısın."
 
-    return prediction, recommendation
+    # ✅ BURASI ÖNEMLİ (aynı hizaya dikkat et)
+    if record.sleep_hours < 6:
+        recommendation = "Daha iyi odaklanmak için uyku süreni artırmalısın."
+    elif record.stress_level > 7:
+        recommendation = "Stres seviyen yüksek. Kısa molalar ve nefes egzersizleri faydalı olabilir."
+    elif record.screen_time > 8:
+        recommendation = "Ekran süren fazla. Gözlerini dinlendirmek için mola ver."
+    elif record.study_hours >= 5 and record.sleep_hours >= 7:
+        recommendation = "Odak seviyen iyi görünüyor. Bu düzeni koruyabilirsin."
+    else:
+        recommendation = "Daha verimli çalışmak için çalışma ve dinlenme dengesini gözden geçirebilirsin."
 
+    return crud.create_daily_record(db, record, prediction, recommendation)
 
 @app.get("/")
 def root():
@@ -99,3 +84,12 @@ def get_records(user_id: int, db: Session = Depends(get_db)):
 @app.post("/feedback", response_model=schemas.FeedbackResponse)
 def create_feedback(feedback: schemas.FeedbackCreate, db: Session = Depends(get_db)):
     return crud.create_feedback(db, feedback)
+
+@app.post("/login", response_model=schemas.UserResponse)
+def login(user: schemas.UserLogin, db: Session = Depends(get_db)):
+    db_user = crud.login_user(db, user)
+
+    if not db_user:
+        raise HTTPException(status_code=401, detail="Email veya şifre hatalı")
+
+    return db_user

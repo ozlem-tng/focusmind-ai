@@ -46,3 +46,9 @@ def create_feedback(db: Session, feedback: schemas.FeedbackCreate):
     db.commit()
     db.refresh(db_feedback)
     return db_feedback
+
+def login_user(db: Session, user: schemas.UserLogin):
+    return db.query(models.User).filter(
+        models.User.email == user.email,
+        models.User.password == user.password
+    ).first()

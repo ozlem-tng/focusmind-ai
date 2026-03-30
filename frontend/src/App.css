@@ -204,3 +204,17 @@ input {
   border-radius: 6px;
   cursor: pointer;
 }
+
+.logout-button {
+  background-color: #8f98a3;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.logout-button:hover {
+  background-color: #7d8792;
+}

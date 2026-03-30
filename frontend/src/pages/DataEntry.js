@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function DataEntry() {
   const [formData, setFormData] = useState({
-    user_id: 3,
+    user_id: Number(localStorage.getItem('user_id')) || '',
     study_hours: '',
     break_count: '',
     sleep_hours: '',
@@ -12,6 +13,7 @@ function DataEntry() {
     stress_level: '',
   });
 
+  const navigate = useNavigate();
   const [result, setResult] = useState(null);
   const [feedbackMessage, setFeedbackMessage] = useState('');
 
@@ -25,6 +27,13 @@ function DataEntry() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFeedbackMessage('');
+    
+
+    if (!localStorage.getItem('user_id')) {
+      alert('Lütfen önce giriş yap.');
+      navigate('/giris');
+      return;
+    }
 
     try {
       const response = await axios.post(
